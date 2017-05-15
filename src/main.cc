@@ -5,6 +5,14 @@
 
 #include <cstdio>
 
+#include "render.h"
+
+void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode) {
+  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+    glfwSetWindowShouldClose(window, GL_TRUE);
+  }
+}
+
 
 int main() {
   glfwInit();
@@ -34,9 +42,14 @@ int main() {
   glfwGetFramebufferSize(window, &width, &height);
   glViewport(0, 0, width, height);
 
+  glfwSetKeyCallback(window, KeyCallback);
+
   // "Game" loop
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
+
+    Render();
+
     glfwSwapBuffers(window);
   }
 
