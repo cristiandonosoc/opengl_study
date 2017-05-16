@@ -1,6 +1,8 @@
 // GLEW
 #include <GL/glew.h>
 
+#include <string>
+
 void Render() {
   // We clear the screen
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

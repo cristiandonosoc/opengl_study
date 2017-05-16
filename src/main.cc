@@ -6,6 +6,7 @@
 #include <cstdio>
 
 #include "render.h"
+#include "helpers.h"
 
 void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode) {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -52,6 +53,9 @@ int main() {
 
     glfwSwapBuffers(window);
   }
+
+  std::string test = opengl_renderer::helpers::LoadFile("shaders/test.shader");
+  printf("%s\n", test.c_str());
 
   glfwTerminate();
   return 0;

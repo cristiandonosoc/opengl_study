@@ -3,11 +3,15 @@
 
 #include <string>
 
+namespace opengl_renderer {
+
 class Shader {
 
-  public:
-   std::string vertex_shader;
-   std::string fragment_shader;
+  private:
+   std::string vertex_shader_;
+   std::string fragment_shader_;
 };
+
+}  // opengl_renderer
 
 #endif // SHADER_H
