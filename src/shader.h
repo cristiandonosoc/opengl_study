@@ -15,7 +15,13 @@ class Shader {
 
   public:
     void LoadShader(ShaderType type, const std::string& src);
+    void LoadShaderFromFile(ShaderType type,
+                            const std::string& filepath);
+
     bool CompileShader(ShaderType type, std::string* error_msg);
+    bool LoadAndCompileShaderFromFile(ShaderType type,
+                                      const std::string& filepath,
+                                      std::string *error_msg);
 
   private:
    std::string vertex_shader_;

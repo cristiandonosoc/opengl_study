@@ -18,7 +18,7 @@ void GetShaderCompileErrorMsg(Shader::ShaderType type,
   if (type == Shader::VERTEX) {
     m = FormattedString(100, "VERTEX COMPILE ERROR: %s", info_log);
   } else {
-    m = FormattedString(100, "VERTEX COMPILE ERROR: %s", info_log);
+    m = FormattedString(100, "FRAGMENT COMPILE ERROR: %s", info_log);
   }
   error_msg->assign(m);
 }
@@ -33,6 +33,12 @@ void Shader::LoadShader(ShaderType type, const std::string& src) {
   } else {
     fprintf(stderr, "Invalid shader type: %d", type);
   }
+}
+
+void Shader::LoadShaderFromFile(ShaderType type,
+                                const std::string& filepath) {
+  std::string src = helpers::LoadFile(filepath);
+  LoadShader(type, src);
 }
 
 bool Shader::CompileShader(ShaderType type, std::string* error_msg) {
@@ -59,5 +65,14 @@ bool Shader::CompileShader(ShaderType type, std::string* error_msg) {
   }
   return true;
 }
+
+bool Shader::LoadAndCompileShaderFromFile(ShaderType type,
+                                          const std::string& filepath,
+                                          std::string *error_msg) {
+  LoadShaderFromFile(type, filepath);
+  return CompileShader(type, error_msg);
+}
+
+
 
 }  // namespace opengl_renderer

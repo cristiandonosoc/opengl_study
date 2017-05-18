@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <cstdio>
+#include <cstdarg>
 
 namespace opengl_renderer {
 namespace helpers {
