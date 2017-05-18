@@ -49,5 +49,16 @@ std::string LoadFile(const std::string& filepath) {
   return result;
 }
 
+std::string FormattedString(int buf_size, const char* fmt, ...) {
+  char *buf = new char[buf_size];
+  va_list args;
+  va_start(args, fmt);
+  vsnprintf(buf, buf_size, fmt, args);
+  va_end(args);
+  std::string buf_string(buf);
+  delete[] buf;
+  return buf_string;
+}
+
 }  // namespace helpers
 }  // namespace opengl_renderer

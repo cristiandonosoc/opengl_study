@@ -1,11 +1,11 @@
 CXX=g++
-CXX_FLAGS=--std=c++11
+CXX_FLAGS=-x c++ --std=c++11
 
 SRC_DIR=src
 OBJ_DIR=obj
 BIN_DIR=bin
 
-INCLUDES=-I $(SRC_DIR) -I /usr/lib64 -I /usr/local/lib
+INCLUDES=-I $(SRC_DIR)
 LIB_PATHS=-L /usr/lib64 -L /usr/local/lib
 LINKER_OPTIONS=-Wl,-rpath /usr/lib64 -Wl,-rpath /usr/local/lib
 LIBS=-lglfw -lGLEW -lGL -lX11 -lpthread -lXrandr -lXi

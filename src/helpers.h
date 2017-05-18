@@ -8,7 +8,7 @@ namespace helpers {
 
 std::string LoadFile(const std::string& filepath);
 
-
+std::string FormattedString(int buf_size, const char *fmt, ...);
 
 }  // namespace helpers
 }  // namespace opengl_renderer

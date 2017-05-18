@@ -6,7 +6,10 @@
 #include <cstdio>
 
 #include "render.h"
+#include "shader.h"
 #include "helpers.h"
+
+using opengl_renderer::Shader;
 
 void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode) {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -45,6 +48,15 @@ int main() {
 
   glfwSetKeyCallback(window, KeyCallback);
 
+  // We get the shader code
+  std::string test = opengl_renderer::helpers::LoadFile("shaders/simple.vert");
+  Shader test_shader;
+  test_shader.LoadShader(Shader::VERTEX, test);
+  std::string error_msg;
+  if (!test_shader.CompileShader(Shader::VERTEX, &error_msg)) {
+    printf("Error compiling shader: %s\n", error_msg.c_str());
+  }
+
   // "Game" loop
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
@@ -54,8 +66,6 @@ int main() {
     glfwSwapBuffers(window);
   }
 
-  std::string test = opengl_renderer::helpers::LoadFile("shaders/test.shader");
-  printf("%s\n", test.c_str());
 
   glfwTerminate();
   return 0;
