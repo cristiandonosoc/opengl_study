@@ -14,6 +14,7 @@ class Shader {
     };
 
   public:
+    void DeleteShader(ShaderType type);
     void LoadShader(ShaderType type, const std::string& src);
     void LoadShaderFromFile(ShaderType type,
                             const std::string& filepath);
@@ -22,14 +23,17 @@ class Shader {
     bool LoadAndCompileShaderFromFile(ShaderType type,
                                       const std::string& filepath,
                                       std::string *error_msg);
+    bool LinkShaders(std::string *error_msg);
+    bool UseShader() const;
 
   private:
    std::string vertex_shader_;
    std::string fragment_shader_;
 
   private:
-   GLuint vertex_shader_handle_;
-   GLuint fragment_shader_handle_;
+   GLuint vertex_shader_handle_ = 0;
+   GLuint fragment_shader_handle_ = 0;
+   GLuint shader_program_handle_ = 0;
 };
 
 }  // opengl_renderer

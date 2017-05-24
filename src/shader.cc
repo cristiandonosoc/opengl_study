@@ -23,6 +23,13 @@ void GetShaderCompileErrorMsg(Shader::ShaderType type,
   error_msg->assign(m);
 }
 
+void GetLinkErrorMsg(GLuint handle, std::string *error_msg) {
+  GLchar info_log[512];
+  glGetProgramInfoLog(handle, 512, NULL, info_log);
+  auto m = FormattedString(100, "SHADER LINKER ERROR: %s", info_log);
+  error_msg->assign(m);
+}
+
 }  // namespace
 
 void Shader::LoadShader(ShaderType type, const std::string& src) {
@@ -71,6 +78,48 @@ bool Shader::LoadAndCompileShaderFromFile(ShaderType type,
                                           std::string *error_msg) {
   LoadShaderFromFile(type, filepath);
   return CompileShader(type, error_msg);
+}
+
+bool Shader::LinkShaders(std::string *error_msg) {
+  shader_program_handle_ =  glCreateProgram();
+  glAttachShader(shader_program_handle_, vertex_shader_handle_);
+  glAttachShader(shader_program_handle_, fragment_shader_handle_);
+  glLinkProgram(shader_program_handle_);
+
+  GLint gl_success;
+  glGetProgramiv(shader_program_handle_, GL_LINK_STATUS, &gl_success);
+  bool success = gl_success != 0;
+  if (!success) {
+    GetLinkErrorMsg(shader_program_handle_, error_msg);
+  }
+
+  // We don't need the shaders anymore
+  DeleteShader(Shader::VERTEX);
+  DeleteShader(Shader::FRAGMENT);
+  return success;
+}
+
+void Shader::DeleteShader(ShaderType type) {
+  if (type == Shader::VERTEX) {
+    if (vertex_shader_handle_) {
+      glDeleteShader(vertex_shader_handle_);
+    }
+    vertex_shader_handle_ = 0;
+  } else {
+    if (fragment_shader_handle_) {
+      glDeleteShader(fragment_shader_handle_);
+    }
+    fragment_shader_handle_ = 0;
+  }
+}
+
+bool Shader::UseShader() const {
+  if (!shader_program_handle_) {
+    return false;
+  }
+
+  glUseProgram(shader_program_handle_);
+  return true;
 }
 
 
