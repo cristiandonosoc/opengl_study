@@ -88,8 +88,6 @@ int main() {
   // We create the shader that we're going to use
   Shader test_shader = CreateShader();
 
-
-
   // We generate a Vertex Buffer Object (VBO)
   GLuint vbo_handle;                            // The VBO handle
   glGenBuffers(1, &vbo_handle);                 // Generate 1 buffer
@@ -98,28 +96,40 @@ int main() {
   GLuint vao_handle;
   glCreateVertexArrays(1, &vao_handle);
 
+	// We create an Element Buffer Object
+  GLuint ebo_handle;
+  glGenBuffers(1, &ebo_handle);
 
   // We store the information we need to interpret the points
   glBindVertexArray(vao_handle);  // This VAO is now active
   {
+    // We send over the vertices
+		GLfloat vertices[] = {
+				 0.5f,  0.5f, 0.0f,  // Top Right
+				 0.5f, -0.5f, 0.0f,  // Bottom Right
+				-0.5f, -0.5f, 0.0f,  // Bottom Left
+				-0.5f,  0.5f, 0.0f   // Top Left
+		};
     glBindBuffer(GL_ARRAY_BUFFER, vbo_handle);  // This VBO is active for GL_ARRAY_BUFFER
-
-    // We define a triangle
-    GLfloat vertices[] = {
-      -0.5f, -0.5f, 0.0f,
-       0.5f, -0.5f, 0.0f,
-       0.0f,  0.5f, 0.0f
-    };
     // We sent this information to the current binded GL_ARRAY_BUFFER
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
     // We set out vertex attrib pointer (how to interpret GL_ARRAY_BUFFER)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
+
+    // We send over the vertex indices
+		GLuint indices[] = {  // Note that we start from 0!
+				0, 1, 3,   // First Triangle
+				1, 2, 3    // Second Triangle
+		};
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_handle);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
   }
   // We undind the buffer array
   glBindVertexArray(0);
 
+  // DEBUG
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   // "Game" loop
   while (!glfwWindowShouldClose(window)) {
@@ -131,8 +141,8 @@ int main() {
     test_shader.UseShader();
     // We bind the attributes for this draw call
     glBindVertexArray(vao_handle);
-    // We draw triangles in the current binded GL_ARRAY_BUFFER
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // We draw triangles in the current binded GL_ARRAY_BUFFER and GL_ELEMENT_ARRAY_BUFFER
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     // We unbind the attributes
     glBindVertexArray(0);
 
