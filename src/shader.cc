@@ -101,16 +101,16 @@ bool Shader::LinkShaders(std::string *error_msg) {
 
 void Shader::DeleteShader(ShaderType type) {
   if (type == Shader::VERTEX) {
-    if (vertex_shader_handle_) {
-      glDeleteShader(vertex_shader_handle_);
-    }
+    glDeleteShader(vertex_shader_handle_);
     vertex_shader_handle_ = 0;
   } else {
-    if (fragment_shader_handle_) {
-      glDeleteShader(fragment_shader_handle_);
-    }
+    glDeleteShader(fragment_shader_handle_);
     fragment_shader_handle_ = 0;
   }
+}
+
+void Shader::DeleteProgram() {
+  glDeleteProgram(shader_program_handle_);
 }
 
 bool Shader::UseShader() const {
@@ -122,6 +122,38 @@ bool Shader::UseShader() const {
   return true;
 }
 
+std::unique_ptr<Shader> Shader::CreateFromPaths(
+    const std::string& vertex_path,
+    const std::string& fragment_path) {
+  std::unique_ptr<Shader> shader(new Shader());
 
+  // Vertex shader
+  bool success;
+  std::string error_msg;
+  success = shader->LoadAndCompileShaderFromFile(Shader::VERTEX,
+                                                 vertex_path,
+                                                 &error_msg);
+  if (!success) {
+    printf("Error compiling shader: %s\n", error_msg.c_str());
+    return nullptr;
+  }
+
+  // Fragment Shader
+  success = shader->LoadAndCompileShaderFromFile(Shader::FRAGMENT,
+                                                 fragment_path,
+                                                 &error_msg);
+  if (!success) {
+    printf("Error compiling shader: %s\n", error_msg.c_str());
+    return nullptr;
+  }
+
+  // We link the shader
+  success = shader->LinkShaders(&error_msg);
+  if (!success) {
+    printf("Error linking shader: %s\n", error_msg.c_str());
+    return nullptr;
+  }
+  return shader;
+}
 
 }  // namespace opengl_renderer

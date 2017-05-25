@@ -2,11 +2,16 @@
 #define SHADER_H
 
 #include <string>
+#include <memory>
 #include <GL/glew.h>
 
 namespace opengl_renderer {
 
 class Shader {
+  public:
+    static std::unique_ptr<Shader> CreateFromPaths(const std::string& vertex_src,
+                                                   const std::string& fragment_src);
+
   public:
     enum ShaderType {
       VERTEX,
@@ -14,7 +19,15 @@ class Shader {
     };
 
   public:
+    ~Shader() {
+      DeleteShader(VERTEX);
+      DeleteShader(FRAGMENT);
+      DeleteProgram();
+    }
+
+  public:
     void DeleteShader(ShaderType type);
+    void DeleteProgram();
     void LoadShader(ShaderType type, const std::string& src);
     void LoadShaderFromFile(ShaderType type,
                             const std::string& filepath);

@@ -18,41 +18,6 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
   }
 }
 
-namespace {
-
-Shader CreateShader() {
-  // We get the shader code
-  bool success;
-  std::string error_msg;
-  Shader test_shader;
-
-  // Vertex shader
-  success = test_shader.LoadAndCompileShaderFromFile(Shader::VERTEX,
-                                                     "shaders/simple.vert",
-                                                     &error_msg);
-  if (!success) {
-    printf("Error compiling shader: %s\n", error_msg.c_str());
-  }
-
-  // Fragment Shader
-  success = test_shader.LoadAndCompileShaderFromFile(Shader::FRAGMENT,
-                                                     "shaders/simple.frag",
-                                                     &error_msg);
-  if (!success) {
-    printf("Error compiling shader: %s\n", error_msg.c_str());
-  }
-
-  // We link the shader
-  success = test_shader.LinkShaders(&error_msg);
-  if (!success) {
-    printf("Error linking shader: %s\n", error_msg.c_str());
-  }
-
-  return test_shader;
-}
-
-}  // namespace
-
 int main() {
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -86,11 +51,11 @@ int main() {
   opengl_renderer::SetupRender();
 
   // We create the shader that we're going to use
-  Shader test_shader = CreateShader();
-
+  std::unique_ptr<Shader> shader_ptr = Shader::CreateFromPaths("shaders/simple.vert",
+                                                               "shaders/simple.frag");
   // We generate a Vertex Buffer Object (VBO)
-  GLuint vbo_handle;                            // The VBO handle
-  glGenBuffers(1, &vbo_handle);                 // Generate 1 buffer
+  GLuint vbo_handle;              // The VBO handle
+  glGenBuffers(1, &vbo_handle);   // Generate 1 buffer
 
   // We create our vertex array objects
   GLuint vao_handle;
@@ -118,9 +83,9 @@ int main() {
     glEnableVertexAttribArray(0);
 
     // We send over the vertex indices
-		GLuint indices[] = {  // Note that we start from 0!
-				0, 1, 3,   // First Triangle
-				1, 2, 3    // Second Triangle
+		GLuint indices[] = {    // Note that we start from 0!
+				0, 1, 3,            // First Triangle
+				1, 2, 3             // Second Triangle
 		};
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_handle);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
@@ -138,7 +103,7 @@ int main() {
     glClearColor(0.5f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    test_shader.UseShader();
+    shader_ptr->UseShader();
     // We bind the attributes for this draw call
     glBindVertexArray(vao_handle);
     // We draw triangles in the current binded GL_ARRAY_BUFFER and GL_ELEMENT_ARRAY_BUFFER
