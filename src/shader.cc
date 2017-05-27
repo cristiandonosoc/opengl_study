@@ -10,15 +10,16 @@ namespace {
 using helpers::FormattedString;
 
 void GetShaderCompileErrorMsg(Shader::ShaderType type,
+                              const std::string& path,
                               GLuint handle,
                               std::string *error_msg) {
   GLchar info_log[512];
   glGetShaderInfoLog(handle, 512, NULL, info_log);
   std::string m;
   if (type == Shader::VERTEX) {
-    m = FormattedString(100, "VERTEX COMPILE ERROR: %s", info_log);
+    m = FormattedString(100, "[%s] VERTEX COMPILE ERROR: %s", path.c_str(), info_log);
   } else {
-    m = FormattedString(100, "FRAGMENT COMPILE ERROR: %s", info_log);
+    m = FormattedString(100, "[%s] FRAGMENT COMPILE ERROR: %s", path.c_str(), info_log);
   }
   error_msg->assign(m);
 }
@@ -32,11 +33,15 @@ void GetLinkErrorMsg(GLuint handle, std::string *error_msg) {
 
 }  // namespace
 
-void Shader::LoadShader(ShaderType type, const std::string& src) {
+void Shader::LoadShader(ShaderType type,
+                        const std::string& filepath,
+                        const std::string& src) {
   if (type == Shader::VERTEX) {
     vertex_shader_ = src;
+    vertex_shader_path_ = filepath;
   } else if (type == Shader::FRAGMENT) {
     fragment_shader_ = src;
+    fragment_shader_path_ = filepath;
   } else {
     fprintf(stderr, "Invalid shader type: %d", type);
   }
@@ -45,20 +50,23 @@ void Shader::LoadShader(ShaderType type, const std::string& src) {
 void Shader::LoadShaderFromFile(ShaderType type,
                                 const std::string& filepath) {
   std::string src = helpers::LoadFile(filepath);
-  LoadShader(type, src);
+  LoadShader(type, filepath, src);
 }
 
 bool Shader::CompileShader(ShaderType type, std::string* error_msg) {
   GLuint handle = 0;
   const char *src;
+  std::string path;
   if (type == Shader::VERTEX) {
     vertex_shader_handle_ = glCreateShader(GL_VERTEX_SHADER);
     handle = vertex_shader_handle_;
     src = vertex_shader_.c_str();
+    path = vertex_shader_path_;
   } else if (type == Shader::FRAGMENT) {
     fragment_shader_handle_ = glCreateShader(GL_FRAGMENT_SHADER);
     handle = fragment_shader_handle_;
     src = fragment_shader_.c_str();
+    path = fragment_shader_path_;
   }
 
   glShaderSource(handle, 1, &src, NULL);
@@ -67,7 +75,7 @@ bool Shader::CompileShader(ShaderType type, std::string* error_msg) {
   GLint sucess;
   glGetShaderiv(handle, GL_COMPILE_STATUS, &sucess);
   if (!sucess) {
-    GetShaderCompileErrorMsg(type, handle, error_msg);
+    GetShaderCompileErrorMsg(type, path, handle, error_msg);
     return false;
   }
   return true;
