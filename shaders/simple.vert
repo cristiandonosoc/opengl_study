@@ -11,5 +11,5 @@ void main() {
   vec3 finalPos = vertexOffset + vec3(pos.x, pos.y, pos.z);
   gl_Position = vec4(finalPos, 1.0f);
   vertexPosition = pos;
-  vertexColor = color;  // Simple pass-through
+  vertexColor = color;
 }

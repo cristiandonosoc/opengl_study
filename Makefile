@@ -1,5 +1,5 @@
 CXX=g++
-CXX_FLAGS=--std=c++11
+CXX_FLAGS=--std=c++11 -Wall -Wextra -Werror
 
 SRC_DIR=src
 OBJ_DIR=obj
