@@ -39,13 +39,16 @@ std::string LoadFile(const std::string& filepath) {
 
   // We seek to the end to find the length
   fseek(file, 0, SEEK_END);
-  long file_length = ftell(file);
+  size_t file_length = ftell(file);
   rewind(file);
 
   std::unique_ptr<char, Deleter<char>> buffer;
   buffer.reset((char*)malloc((file_length + 1) * sizeof(char)));
 
-  fread(buffer.get(), file_length, 1, file);
+  size_t read_result = fread(buffer.get(), file_length, 1, file);
+  if (read_result != 1) {
+    fprintf(stderr, "Didn't read whole file: %lu vs  %lu\n", read_result, file_length);
+  }
   std::string result(buffer.get());
   return result;
 }
