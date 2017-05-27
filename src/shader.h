@@ -39,6 +39,9 @@ class Shader {
     bool LinkShaders(std::string *error_msg);
     bool UseShader() const;
 
+  public:
+    GLuint GetProgramHandle() const { return shader_program_handle_; }
+
   private:
    std::string vertex_shader_;
    std::string fragment_shader_;
