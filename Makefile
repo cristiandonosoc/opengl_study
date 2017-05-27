@@ -4,8 +4,9 @@ CXX_FLAGS=--std=c++11
 SRC_DIR=src
 OBJ_DIR=obj
 BIN_DIR=bin
+EXTERNAL_DIR=external
 
-INCLUDES=-I $(SRC_DIR)
+INCLUDES=-I ./$(SRC_DIR) -I ./$(EXTERNAL_DIR)
 LIB_PATHS=-L /usr/lib64 -L /usr/local/lib
 LINKER_OPTIONS=-Wl,-rpath /usr/lib64 -Wl,-rpath /usr/local/lib
 LIBS=-lglfw -lGLEW -lGL -lX11 -lpthread -lXrandr -lXi
@@ -24,7 +25,7 @@ dirs: $(BIN_DIR) $(OBJ_DIR)
 
 # Compiles each .o from a .cc
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc
-	$(CXX) $(CXX_FLAGS) -c $^ -o $@
+	$(CXX) $(CXX_FLAGS) $(INCLUDES) -c $^ -o $@
 
 
 $(OBJ_DIR):
