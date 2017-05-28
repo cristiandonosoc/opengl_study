@@ -184,9 +184,9 @@ int main() {
   std::unique_ptr<Shader> tex_shader = Shader::CreateFromPaths("shaders/textured.vert",
                                                                "shaders/textured.frag");
 
-  printf("SETUP\n");
+  fprintf(stderr, "[main] PRE TEXTURE\n");
   GLuint texture_handle = SetupTexture("textures/wall.jpg");
-  printf("TEXTURE\n");
+  fprintf(stderr, "[main] POST TEXTURE\n");
 
   // We see about the uniform color variable
   std::string pos_offset("vertexOffset");

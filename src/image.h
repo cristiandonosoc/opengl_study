@@ -21,8 +21,11 @@ class Image {
 
   public:
     Image(Image&& i) noexcept {
-      data_holder_ = std::move(i.data_holder_);
-      printf("[Image::move_ctor]\n");
+      printf("[Image::move_ctor] BEGIN\n");
+      printf("INCOME POINTER BEFORE: %p\n", i.data_holder_.data_);
+      Move(std::move(i));
+      printf("INCOME POINTER AFTER: %p\n", i.data_holder_.data_);
+      printf("[Image::move_ctor] END\n");
     };
 
     Image& operator=(Image&& i) noexcept {
@@ -33,6 +36,12 @@ class Image {
 
   private:
     void Load(const std::string& path);
+
+  private:
+    void Move(Image&& i) {
+      data_holder_ = std::move(i.data_holder_);
+      i.data_holder_ = Image::Data();
+    }
 
 
   public:
