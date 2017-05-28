@@ -13,7 +13,7 @@ class Image {
 
   public:
     Image() = default;
-    ~Image();
+    ~Image() = default;
 
   public:
     Image(const Image& i) = delete;
@@ -21,16 +21,14 @@ class Image {
 
   public:
     Image(Image&& i) noexcept {
-      printf("[Image::move_ctor] BEGIN\n");
-      printf("INCOME POINTER BEFORE: %p\n", i.data_holder_.data_);
       Move(std::move(i));
-      printf("INCOME POINTER AFTER: %p\n", i.data_holder_.data_);
-      printf("[Image::move_ctor] END\n");
     };
 
     Image& operator=(Image&& i) noexcept {
-      data_holder_ = std::move(i.data_holder_);
-      printf("[Image::move_assign]\n");
+      if (this != &i) {
+        Destroy();
+      }
+      Move(std::move(i));
       return *this;
     };
 
@@ -40,7 +38,15 @@ class Image {
   private:
     void Move(Image&& i) {
       data_holder_ = std::move(i.data_holder_);
+      // We clear the data
       i.data_holder_ = Image::Data();
+    }
+
+    void Destroy() {
+      if (data_holder_.data_ != nullptr) {
+        stbi_image_free(data_holder_.data_);
+      }
+      data_holder_ = Image::Data();
     }
 
 

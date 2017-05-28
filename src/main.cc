@@ -10,12 +10,13 @@
 #include "shader.h"
 #include "helpers.h"
 #include "image.h"
-
+#include "log.h"
 
 #define HANDLE_COUNT 3
 
 using opengl_renderer::Shader;
 using opengl_renderer::Image;
+using opengl_renderer::LogError;
 using opengl_renderer::helpers::LoadFile;
 
 namespace {
@@ -100,7 +101,6 @@ void SetupVertexArrays(GLuint *vbo_handles, GLuint *vao_handles,
 
 GLuint SetupTexture(const std::string& path) {
   Image image = Image::Create(path);
-  printf("AFTER CONSTRUCTOR\n");
 
   GLuint texture_handle;
   glGenTextures(1, &texture_handle);
@@ -134,7 +134,7 @@ int main() {
 
   GLFWwindow *window = glfwCreateWindow(800, 600, "Learn OpenGL", nullptr, nullptr);
   if (window == nullptr) {
-    printf("Failed to create GLFW window\n");
+    LogError("Failed to create GLFW window\n");
     return 1;
   }
   glfwMakeContextCurrent(window);
@@ -143,7 +143,7 @@ int main() {
   glewExperimental = GL_TRUE;
   GLenum err = glewInit();
   if (err != GLEW_OK) {
-    fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+    LogError("Error: %s\n", glewGetErrorString(err));
     return 1;
   }
 
@@ -157,7 +157,7 @@ int main() {
 
   GLint num_attributes;
   glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &num_attributes);
-  printf("MAX ATTRIBS NUM: %d\n", num_attributes);
+  fprintf(stderr, "MAX ATTRIBS NUM: %d\n", num_attributes);
 
   // We generate a Vertex Buffer Object (VBO)
   GLuint vbo_handles[HANDLE_COUNT];
@@ -183,23 +183,20 @@ int main() {
                                                                "shaders/simple2.frag");
   std::unique_ptr<Shader> tex_shader = Shader::CreateFromPaths("shaders/textured.vert",
                                                                "shaders/textured.frag");
-
-  fprintf(stderr, "[main] PRE TEXTURE\n");
   GLuint texture_handle = SetupTexture("textures/wall.jpg");
-  fprintf(stderr, "[main] POST TEXTURE\n");
 
   // We see about the uniform color variable
   std::string pos_offset("vertexOffset");
   GLint offset_handle = glGetUniformLocation(shader_ptr->GetProgramHandle(),
                                              pos_offset.c_str());
   if (offset_handle == -1) {
-    printf("COULD NOT FIND VARIABLE FOR: %s\n", pos_offset.c_str());
+    fprintf(stderr, "COULD NOT FIND VARIABLE FOR: %s\n", pos_offset.c_str());
   }
   std::string color_variable("ourColor");
   GLint color_uniform_handle = glGetUniformLocation(shader_ptr2->GetProgramHandle(),
                                                     color_variable.c_str());
   if (color_uniform_handle == -1) {
-    printf("COULD NOT FIND VARIABLE FOR: %s\n", color_variable.c_str());
+    fprintf(stderr, "COULD NOT FIND VARIABLE FOR: %s\n", color_variable.c_str());
   }
 
 
