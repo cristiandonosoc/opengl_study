@@ -1,4 +1,5 @@
 #include "helpers.h"
+#include "log.h"
 
 #include <memory>
 #include <cstdio>
@@ -33,7 +34,7 @@ std::string LoadFile(const std::string& filepath) {
   std::unique_ptr<FILE, Deleter<FILE>> file_unique_ptr(file);
 
   if (!file) {
-    fprintf(stderr, "Could open file %s", filepath.c_str());
+    LogError("Could open file %s", filepath.c_str());
     return "";
   }
 
@@ -47,7 +48,7 @@ std::string LoadFile(const std::string& filepath) {
 
   size_t read_result = fread(buffer.get(), file_length, 1, file);
   if (read_result != 1) {
-    fprintf(stderr, "Didn't read whole file: %lu vs  %lu\n", read_result, file_length);
+    LogError("Didn't read whole file: %lu vs  %lu\n", read_result, file_length);
   }
   std::string result(buffer.get());
   return result;

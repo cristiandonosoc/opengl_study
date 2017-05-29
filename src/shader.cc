@@ -1,5 +1,6 @@
 #include "shader.h"
 #include "helpers.h"
+#include "log.h"
 
 #include <cstdio>
 
@@ -43,7 +44,7 @@ void Shader::LoadShader(ShaderType type,
     fragment_shader_ = src;
     fragment_shader_path_ = filepath;
   } else {
-    fprintf(stderr, "Invalid shader type: %d", type);
+    LogError("Invalid shader type: %d", type);
   }
 }
 
@@ -142,7 +143,7 @@ std::unique_ptr<Shader> Shader::CreateFromPaths(
                                                  vertex_path,
                                                  &error_msg);
   if (!success) {
-    printf("Error compiling shader: %s\n", error_msg.c_str());
+    LogError("Error compiling shader: %s\n", error_msg.c_str());
     return nullptr;
   }
 
@@ -151,14 +152,14 @@ std::unique_ptr<Shader> Shader::CreateFromPaths(
                                                  fragment_path,
                                                  &error_msg);
   if (!success) {
-    printf("Error compiling shader: %s\n", error_msg.c_str());
+    LogError("Error compiling shader: %s\n", error_msg.c_str());
     return nullptr;
   }
 
   // We link the shader
   success = shader->LinkShaders(&error_msg);
   if (!success) {
-    printf("Error linking shader: %s\n", error_msg.c_str());
+    LogError("Error linking shader: %s\n", error_msg.c_str());
     return nullptr;
   }
   return shader;

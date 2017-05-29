@@ -157,7 +157,7 @@ int main() {
 
   GLint num_attributes;
   glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &num_attributes);
-  fprintf(stderr, "MAX ATTRIBS NUM: %d\n", num_attributes);
+  LogError("MAX ATTRIBS NUM: %d\n", num_attributes);
 
   // We generate a Vertex Buffer Object (VBO)
   GLuint vbo_handles[HANDLE_COUNT];
@@ -190,13 +190,13 @@ int main() {
   GLint offset_handle = glGetUniformLocation(shader_ptr->GetProgramHandle(),
                                              pos_offset.c_str());
   if (offset_handle == -1) {
-    fprintf(stderr, "COULD NOT FIND VARIABLE FOR: %s\n", pos_offset.c_str());
+    LogError("COULD NOT FIND VARIABLE FOR: %s\n", pos_offset.c_str());
   }
   std::string color_variable("ourColor");
   GLint color_uniform_handle = glGetUniformLocation(shader_ptr2->GetProgramHandle(),
                                                     color_variable.c_str());
   if (color_uniform_handle == -1) {
-    fprintf(stderr, "COULD NOT FIND VARIABLE FOR: %s\n", color_variable.c_str());
+    LogError("COULD NOT FIND VARIABLE FOR: %s\n", color_variable.c_str());
   }
 
 
