@@ -10,14 +10,15 @@
 #include "shader.h"
 #include "helpers.h"
 #include "image.h"
-#include "log.h"
 
 #define HANDLE_COUNT 3
 
-using opengl_renderer::Shader;
-using opengl_renderer::Image;
-using opengl_renderer::LogError;
-using opengl_renderer::helpers::LoadFile;
+
+using namespace opengl_renderer;
+/* using opengl_renderer::Shader; */
+/* using opengl_renderer::Image; */
+/* using opengl_renderer::helpers::LogError; */
+/* using opengl_renderer::helpers::LoadFile; */
 
 namespace {
 
@@ -134,7 +135,7 @@ int main() {
 
   GLFWwindow *window = glfwCreateWindow(800, 600, "Learn OpenGL", nullptr, nullptr);
   if (window == nullptr) {
-    LogError("Failed to create GLFW window\n");
+    helpers::LogError("Failed to create GLFW window\n");
     return 1;
   }
   glfwMakeContextCurrent(window);
@@ -143,7 +144,7 @@ int main() {
   glewExperimental = GL_TRUE;
   GLenum err = glewInit();
   if (err != GLEW_OK) {
-    LogError("Error: %s\n", glewGetErrorString(err));
+    helpers::LogError("Error: %s\n", glewGetErrorString(err));
     return 1;
   }
 
@@ -155,9 +156,7 @@ int main() {
 
   glfwSetKeyCallback(window, KeyCallback);
 
-  GLint num_attributes;
-  glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &num_attributes);
-  LogError("MAX ATTRIBS NUM: %d\n", num_attributes);
+
 
   // We generate a Vertex Buffer Object (VBO)
   GLuint vbo_handles[HANDLE_COUNT];
@@ -172,6 +171,11 @@ int main() {
   glGenBuffers(HANDLE_COUNT, ebo_handles);
 
   SetupVertexArrays(vbo_handles, vao_handles, ebo_handles);
+
+
+  GLint num_attributes = -1;
+  glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &num_attributes);
+  helpers::LogError("MAX ATTRIBS NUM: %ld\n", num_attributes);
 
   // DEBUG
   /* glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); */
@@ -190,13 +194,15 @@ int main() {
   GLint offset_handle = glGetUniformLocation(shader_ptr->GetProgramHandle(),
                                              pos_offset.c_str());
   if (offset_handle == -1) {
-    LogError("COULD NOT FIND VARIABLE FOR: %s\n", pos_offset.c_str());
+    helpers::LogError("COULD NOT FIND VARIABLE FOR: %s\n",
+                      pos_offset.c_str());
   }
   std::string color_variable("ourColor");
   GLint color_uniform_handle = glGetUniformLocation(shader_ptr2->GetProgramHandle(),
                                                     color_variable.c_str());
   if (color_uniform_handle == -1) {
-    LogError("COULD NOT FIND VARIABLE FOR: %s\n", color_variable.c_str());
+    helpers::LogError("COULD NOT FIND VARIABLE FOR: %s\n",
+                      color_variable.c_str());
   }
 
 

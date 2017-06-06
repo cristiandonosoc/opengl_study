@@ -1,9 +1,10 @@
 #include "helpers.h"
-#include "log.h"
 
 #include <memory>
 #include <cstdio>
 #include <cstdarg>
+
+#define DEFAULT_LOG_LENGTH 100
 
 namespace opengl_renderer {
 namespace helpers {
@@ -63,6 +64,31 @@ std::string FormattedString(int buf_size, const char* fmt, ...) {
   std::string buf_string(buf);
   delete[] buf;
   return buf_string;
+}
+
+std::string FormattedString(const char* fmt, ...) {
+  char *buf = new char[DEFAULT_LOG_LENGTH];
+  va_list args;
+  va_start(args, fmt);
+  std::vsnprintf(buf, DEFAULT_LOG_LENGTH, fmt, args);
+  va_end(args);
+  std::string buf_string(buf);
+  delete[] buf;
+  return buf_string;
+}
+
+void Log(const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  vprintf(fmt, args);
+  va_end(args);
+}
+
+void LogError(const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  vfprintf(stderr, fmt, args);
+  va_end(args);
 }
 
 }  // namespace helpers

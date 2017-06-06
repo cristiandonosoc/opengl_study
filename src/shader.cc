@@ -1,6 +1,5 @@
 #include "shader.h"
 #include "helpers.h"
-#include "log.h"
 
 #include <cstdio>
 
@@ -9,6 +8,7 @@ namespace opengl_renderer {
 namespace {
 
 using helpers::FormattedString;
+using helpers::LogError;
 
 void GetShaderCompileErrorMsg(Shader::ShaderType type,
                               const std::string& path,
