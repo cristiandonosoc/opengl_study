@@ -51,6 +51,8 @@ std::string LoadFile(const std::string& filepath) {
   if (read_result != 1) {
     LogError("Didn't read whole file: %lu vs  %lu\n", read_result, file_length);
   }
+  // We end the string
+  buffer.get()[file_length] = 0;
   std::string result(buffer.get());
   return result;
 }

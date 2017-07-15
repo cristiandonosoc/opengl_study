@@ -1,5 +1,6 @@
 // GLEW
-#include <GL/glew.h>
+/* #include <GL/glew.h> */
+#include <glad/glad.h>
 // GLFW
 #include <GLFW/glfw3.h>
 
@@ -140,12 +141,16 @@ int main() {
   }
   glfwMakeContextCurrent(window);
 
-  // GLEW Initialization
-  glewExperimental = GL_TRUE;
-  GLenum err = glewInit();
-  if (err != GLEW_OK) {
-    helpers::LogError("Error: %s\n", glewGetErrorString(err));
-    return 1;
+  /* // GLEW Initialization */
+  /* glewExperimental = GL_TRUE; */
+  /* GLenum err = glewInit(); */
+  /* if (err != GLEW_OK) { */
+  /*   helpers::LogError("Error: %s\n", glewGetErrorString(err)); */
+  /*   return 1; */
+  /* } */
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    fprintf(stderr, "Failed to initialize GLAD\n");
+    return -1;
   }
 
   int width;
@@ -164,7 +169,7 @@ int main() {
 
   // We create our vertex array objects
   GLuint vao_handles[HANDLE_COUNT];
-  glCreateVertexArrays(HANDLE_COUNT, vao_handles);
+  glGenVertexArrays(HANDLE_COUNT, vao_handles);
 
 	// We create an Element Buffer Object
   GLuint ebo_handles[HANDLE_COUNT];

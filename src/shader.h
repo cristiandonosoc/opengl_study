@@ -3,7 +3,8 @@
 
 #include <string>
 #include <memory>
-#include <GL/glew.h>
+/* #include <GL/glew.h> */
+#include <glad/glad.h>
 
 namespace opengl_renderer {
 
@@ -46,8 +47,10 @@ class Shader {
   private:
    std::string vertex_shader_;
    std::string vertex_shader_path_;
+   const char *vertex_shader_ptr_;
    std::string fragment_shader_;
    std::string fragment_shader_path_;
+   const char *fragment_shader_ptr_;
 
   private:
    GLuint vertex_shader_handle_ = 0;

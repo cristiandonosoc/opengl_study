@@ -4,12 +4,13 @@ CXX_FLAGS=--std=c++11 -Wall -Wextra -Werror -g -Og
 SRC_DIR=src
 OBJ_DIR=obj
 BIN_DIR=bin
+INCLUDE_DIR=include
 EXTERNAL_DIR=external
 
-INCLUDES=-I ./$(SRC_DIR) -I ./$(EXTERNAL_DIR)
-LIB_PATHS=-L /usr/lib64 -L /usr/local/lib
-LINKER_OPTIONS=-Wl,-rpath /usr/lib64 -Wl,-rpath /usr/local/lib
-LIBS=-lglfw -lGLEW -lGL -lX11 -lpthread -lXrandr -lXi
+INCLUDES=-I ./$(SRC_DIR) -I ./$(EXTERNAL_DIR) -I $(INCLUDE_DIR) -isystem /usr/local/include
+LIB_PATHS=-L /usr/lib64 -L /usr/local/lib -L /usr/local/lib64
+# LINKER_OPTIONS=-Wl,-rpath /usr/lib32 -Wl,-rpath /usr/local/lib
+LIBS= -lglfw3 -lGL  -lpthread -lX11 -lXrandr -lXinerama -lXxf86vm -lXcursor -ldl
 
 SOURCES=$(wildcard $(SRC_DIR)/*.cc)
 OBJECTS=$(patsubst $(SRC_DIR)/%.cc, $(OBJ_DIR)/%.o, $(SOURCES))
@@ -18,8 +19,11 @@ OUTPUT=$(BIN_DIR)/opengl_app
 
 all: dirs main
 
-main: $(OBJECTS)
+main: $(OBJECTS) $(SRC_DIR)/glad.o
 	$(CXX) $(CXX_FLAGS) $(LIB_PATHS) $(LINKER_OPTIONS) $^ -o $(OUTPUT) $(LIBS)
+
+$(SRC_DIR)/glad.o: $(SRC_DIR)/glad.c
+	$(CXX) $(CXX_FLAGS) $(INCLUDES) -c $^ -o $@
 
 dirs: $(BIN_DIR) $(OBJ_DIR)
 

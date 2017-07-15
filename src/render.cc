@@ -1,6 +1,4 @@
-// GLEW
-#include <GL/glew.h>
-
+#include <glad/glad.h>
 #include <string>
 
 #include "shader.h"

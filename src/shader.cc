@@ -18,9 +18,9 @@ void GetShaderCompileErrorMsg(Shader::ShaderType type,
   glGetShaderInfoLog(handle, 512, NULL, info_log);
   std::string m;
   if (type == Shader::VERTEX) {
-    m = FormattedString(100, "[%s] VERTEX COMPILE ERROR: %s", path.c_str(), info_log);
+    m = FormattedString(1000, "[%s] VERTEX COMPILE ERROR: %s", path.c_str(), info_log);
   } else {
-    m = FormattedString(100, "[%s] FRAGMENT COMPILE ERROR: %s", path.c_str(), info_log);
+    m = FormattedString(1000, "[%s] FRAGMENT COMPILE ERROR: %s", path.c_str(), info_log);
   }
   error_msg->assign(m);
 }
@@ -40,9 +40,11 @@ void Shader::LoadShader(ShaderType type,
   if (type == Shader::VERTEX) {
     vertex_shader_ = src;
     vertex_shader_path_ = filepath;
+    vertex_shader_ptr_ = vertex_shader_.c_str();
   } else if (type == Shader::FRAGMENT) {
     fragment_shader_ = src;
     fragment_shader_path_ = filepath;
+    fragment_shader_ptr_ = fragment_shader_.c_str();
   } else {
     LogError("Invalid shader type: %d", type);
   }
@@ -56,21 +58,26 @@ void Shader::LoadShaderFromFile(ShaderType type,
 
 bool Shader::CompileShader(ShaderType type, std::string* error_msg) {
   GLuint handle = 0;
-  const char *src;
+  const char **src = nullptr;
   std::string path;
   if (type == Shader::VERTEX) {
     vertex_shader_handle_ = glCreateShader(GL_VERTEX_SHADER);
     handle = vertex_shader_handle_;
-    src = vertex_shader_.c_str();
+    src = &vertex_shader_ptr_;
     path = vertex_shader_path_;
   } else if (type == Shader::FRAGMENT) {
     fragment_shader_handle_ = glCreateShader(GL_FRAGMENT_SHADER);
     handle = fragment_shader_handle_;
-    src = fragment_shader_.c_str();
+    src = &fragment_shader_ptr_;
     path = fragment_shader_path_;
   }
 
-  glShaderSource(handle, 1, &src, NULL);
+  if (!src) {
+    *error_msg = "Could not obtain src for shader";
+    return false;
+  }
+
+  glShaderSource(handle, 1, src, NULL);
   glCompileShader(handle);
 
   GLint sucess;
